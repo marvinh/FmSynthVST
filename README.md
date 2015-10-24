@@ -1,7 +1,7 @@
 # FmSynthVST
 
 Frequency Modulation VSTi adapted from the examples:
-IPlugPolySynth (https://github.com/olilarkin),and 
+IPlugPolySynth (https://github.com/olilarkin), and 
 MDA-VST DX10 (http://sourceforge.net/projects/mda-vst/).
 
 I added a vstgui, a voice allocation algorithm that will replace the oldest note

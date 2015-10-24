@@ -58,16 +58,25 @@ bool fms4Editor::open (void* ptr)
     CRect knobFrame(0,0,40,40);
     CRect knobFrame2(0,0,40,40);
     CRect polyFrame(0,0,100,40);
+    CRect textFrame(0,0,60,100);
+    
+    textFrame.offset(60,0);
     
     CFrame* newFrame = new CFrame (frameSize,this);
+    CTextLabel* envlabel = new CTextLabel(textFrame,"Envelopes");
+    envlabel->setFontColor(kWhiteCColor);
+    textFrame.offset(380, 0);
+    CTextLabel* matlabel = new CTextLabel(textFrame,"Matrix");
 
-    newFrame->open(ptr);
-    newFrame->setBackgroundColor (kBlackCColor);
-    
     CBitmap* animatedKnob = new CBitmap("knob.png");
     CBitmap* animatedKnob2 = new CBitmap("knob.png");
     CBitmap* animatedKnobPoly = new CBitmap("poly.png");
 
+    newFrame->open(ptr);
+    newFrame->setBackgroundColor (kBlackCColor);
+    newFrame->addView(envlabel);
+    newFrame->addView(matlabel);
+    
     knobFrame2.offset(60,60);
     CKnob* a1 = new CAnimKnob(knobFrame2,this,kAttack1,animatedKnob2,CPoint(0,0));
     newFrame->addView (a1);
@@ -81,7 +90,6 @@ bool fms4Editor::open (void* ptr)
     CKnob* r1 = new CAnimKnob(knobFrame2,this,kRelease1,animatedKnob2,CPoint(0,0));
     newFrame->addView (r1);
     
-  
     knobFrame2.offset(-120,40);
     CKnob* a2 = new CAnimKnob(knobFrame2,this,kAttack2,animatedKnob2,CPoint(0,0));
     newFrame->addView (a2);

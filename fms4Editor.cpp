@@ -47,174 +47,182 @@ fms4Editor::fms4Editor (void* ptr)
     rect.left   = 0;
     rect.top    = 0;
     rect.right  = 700;
-    rect.bottom = 400;
+    rect.bottom = 500;
 }
 
 //------------------------------------------------------------------------------------
 bool fms4Editor::open (void* ptr)
 {
   
-    CRect frameSize (0, 0, 700,400);
-    CRect knobFrame(0,0,40,40);
-    CRect knobFrame2(0,0,40,40);
+    CRect frameSize (0, 0, 700,500);
+    CRect knobFrame(0,0,30,30);
+    CRect knobFrame2(0,0,15,60);
     CRect polyFrame(0,0,100,40);
-    CRect textFrame(0,0,60,100);
+    CRect textFrame(0,0,60,20);
     
-    textFrame.offset(60,0);
+    envW=30;//Knobframe2 offsets
+    envH=70;
+    
+    matW=31;//Knobframe offsets
+    matH=31;
     
     CFrame* newFrame = new CFrame (frameSize,this);
+    
+    textFrame.offset(60,40);
     CTextLabel* envlabel = new CTextLabel(textFrame,"Envelopes");
     envlabel->setFontColor(kWhiteCColor);
-    textFrame.offset(380, 0);
+    
+    textFrame.offset(380,0);
     CTextLabel* matlabel = new CTextLabel(textFrame,"Matrix");
 
-    CBitmap* animatedKnob = new CBitmap("knob.png");
-    CBitmap* animatedKnob2 = new CBitmap("knob.png");
+    CBitmap* animatedKnob = new CBitmap("matkb.png");
+    CBitmap* animatedKnob2 = new CBitmap("envkb.png");
     CBitmap* animatedKnobPoly = new CBitmap("poly.png");
 
     newFrame->open(ptr);
-    newFrame->setBackgroundColor (kBlackCColor);
+    newFrame->setBackgroundColor (CColor(0,26,53,200));
     newFrame->addView(envlabel);
     newFrame->addView(matlabel);
     
     knobFrame2.offset(60,60);
+    
     CKnob* a1 = new CAnimKnob(knobFrame2,this,kAttack1,animatedKnob2,CPoint(0,0));
     newFrame->addView (a1);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* d1 = new CAnimKnob(knobFrame2,this,kDecay1,animatedKnob2,CPoint(0,0));
     newFrame->addView (d1);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* s1 = new CAnimKnob(knobFrame2,this,kSustain1,animatedKnob2,CPoint(0,0));
     newFrame->addView (s1);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* r1 = new CAnimKnob(knobFrame2,this,kRelease1,animatedKnob2,CPoint(0,0));
     newFrame->addView (r1);
     
-    knobFrame2.offset(-120,40);
+    knobFrame2.offset(-3*envW,envH);
     CKnob* a2 = new CAnimKnob(knobFrame2,this,kAttack2,animatedKnob2,CPoint(0,0));
     newFrame->addView (a2);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* d2 = new CAnimKnob(knobFrame2,this,kDecay2,animatedKnob2,CPoint(0,0));
     newFrame->addView (d2);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* s2 = new CAnimKnob(knobFrame2,this,kSustain2,animatedKnob2,CPoint(0,0));
     newFrame->addView (s2);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* r2 = new CAnimKnob(knobFrame2,this,kRelease2,animatedKnob2,CPoint(0,0));
     newFrame->addView (r2);
 
-    knobFrame2.offset(-120,40);
+    knobFrame2.offset(-3*envW,envH);
     CKnob* a3 = new CAnimKnob(knobFrame2,this,kAttack3,animatedKnob2,CPoint(0,0));
     newFrame->addView (a3);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* d3 = new CAnimKnob(knobFrame2,this,kDecay3,animatedKnob2,CPoint(0,0));
     newFrame->addView (d3);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* s3 = new CAnimKnob(knobFrame2,this,kSustain3,animatedKnob2,CPoint(0,0));
     newFrame->addView (s3);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* r3 = new CAnimKnob(knobFrame2,this,kRelease3,animatedKnob2,CPoint(0,0));
     newFrame->addView (r3);
     
     
-    knobFrame2.offset(-120,40);
+    knobFrame2.offset(-3*envW,envH);
     CKnob* a4 = new CAnimKnob(knobFrame2,this,kAttack4,animatedKnob2,CPoint(0,0));
     newFrame->addView (a4);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* d4 = new CAnimKnob(knobFrame2,this,kDecay4,animatedKnob2,CPoint(0,0));
     newFrame->addView (d4);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* s4 = new CAnimKnob(knobFrame2,this,kSustain4,animatedKnob2,CPoint(0,0));
     newFrame->addView (s4);
-    knobFrame2.offset(40,0);
+    knobFrame2.offset(envW,0);
     CKnob* r4 = new CAnimKnob(knobFrame2,this,kRelease4,animatedKnob2,CPoint(0,0));
     newFrame->addView (r4);
     
     
-    polyFrame.offset(0,360);
+    polyFrame.offset(0,460);
     CKnob* knob1 = new CAnimKnob(polyFrame,this,kVoices,animatedKnobPoly,CPoint(0,0));
     newFrame->addView (knob1);
-    
+
     knobFrame.offset(440,60);
     CKnob* km121 = new CAnimKnob(knobFrame,this,kMod1to1,animatedKnob,CPoint(0,0));
     newFrame->addView (km121);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km221 = new CAnimKnob(knobFrame,this,kMod2to1,animatedKnob,CPoint(0,0));
     newFrame->addView (km221);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km321 = new CAnimKnob(knobFrame,this,kMod3to1,animatedKnob,CPoint(0,0));
     newFrame->addView (km321);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km421 = new CAnimKnob(knobFrame,this,kMod4to1,animatedKnob,CPoint(0,0));
     newFrame->addView (km421);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH+20);
     CKnob* p1 = new CAnimKnob(knobFrame,this,kPan1,animatedKnob,CPoint(0,0));
     newFrame->addView (p1);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* op1 = new CAnimKnob(knobFrame,this,kOutPut1,animatedKnob,CPoint(0,0));
     newFrame->addView (op1);
 
     
     
-    knobFrame.offset(40,-200);
+    knobFrame.offset(matW,-20-matH*5);
     CKnob* km122 = new CAnimKnob(knobFrame,this,kMod1to2,animatedKnob,CPoint(0,0));
     newFrame->addView (km122);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km222 = new CAnimKnob(knobFrame,this,kMod2to2,animatedKnob,CPoint(0,0));
     newFrame->addView (km222);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km322 = new CAnimKnob(knobFrame,this,kMod3to2,animatedKnob,CPoint(0,0));
     newFrame->addView (km322);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km422 = new CAnimKnob(knobFrame,this,kMod4to2,animatedKnob,CPoint(0,0));
     newFrame->addView (km422);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH+20);
     CKnob* p2 = new CAnimKnob(knobFrame,this,kPan2,animatedKnob,CPoint(0,0));
     newFrame->addView (p2);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* op2 = new CAnimKnob(knobFrame,this,kOutPut2,animatedKnob,CPoint(0,0));
     newFrame->addView (op2);
     
-    knobFrame.offset(40,-200);
+    knobFrame.offset(matW,-20-matH*5);
     CKnob* km123 = new CAnimKnob(knobFrame,this,kMod1to3,animatedKnob,CPoint(0,0));
     newFrame->addView (km123);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km223 = new CAnimKnob(knobFrame,this,kMod2to3,animatedKnob,CPoint(0,0));
     newFrame->addView (km223);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km323 = new CAnimKnob(knobFrame,this,kMod3to3,animatedKnob,CPoint(0,0));
     newFrame->addView (km323);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km423 = new CAnimKnob(knobFrame,this,kMod4to3,animatedKnob,CPoint(0,0));
     newFrame->addView (km423);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH+20);
     CKnob* p3 = new CAnimKnob(knobFrame,this,kPan3,animatedKnob,CPoint(0,0));
     newFrame->addView (p3);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* op3 = new CAnimKnob(knobFrame,this,kOutPut3,animatedKnob,CPoint(0,0));
     newFrame->addView (op3);
 
     
-    knobFrame.offset(40,-200);
+    knobFrame.offset(matW,-20-matH*5);
     CKnob* km124 = new CAnimKnob(knobFrame,this,kMod1to4,animatedKnob,CPoint(0,0));
     newFrame->addView (km124);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km224 = new CAnimKnob(knobFrame,this,kMod2to4,animatedKnob,CPoint(0,0));
     newFrame->addView (km224);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km324 = new CAnimKnob(knobFrame,this,kMod3to4,animatedKnob,CPoint(0,0));
     newFrame->addView (km324);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* km424 = new CAnimKnob(knobFrame,this,kMod4to4,animatedKnob,CPoint(0,0));
     newFrame->addView (km424);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH+20);
     CKnob* p4 = new CAnimKnob(knobFrame,this,kPan4,animatedKnob,CPoint(0,0));
     newFrame->addView (p4);
-    knobFrame.offset(0,40);
+    knobFrame.offset(0,matH);
     CKnob* op4 = new CAnimKnob(knobFrame,this,kOutPut4,animatedKnob,CPoint(0,0));
     newFrame->addView (op4);
     
-    //animatedKnob->forget();
+    animatedKnob->forget();
     animatedKnobPoly->forget();
     animatedKnob2->forget();
     

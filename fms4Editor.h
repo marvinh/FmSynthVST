@@ -59,7 +59,12 @@ public:
     };
     // from CControlListener
     void valueChanged (CControl* pControl);
+
+    int envH;
+    int envW;
     
+    int matH;
+    int matW;
 protected:
     //CBitmap* background; //= new CBitmap ("bg.png");
     CControl* controls[kNumParams];

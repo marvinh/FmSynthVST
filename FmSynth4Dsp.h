@@ -111,19 +111,5 @@ struct CVoiceState
         noteIsOn=false;
         age=0;
     }
-     bool GetBusy()
-     {
-         if (mEnv_ctx[0].mStage==kIdle
-             &&mEnv_ctx[1].mStage==kIdle
-             &&mEnv_ctx[2].mStage==kIdle
-             &&mEnv_ctx[3].mStage==kIdle){
-             return false;
-         }else{
-             return true;
-         }
-     }
-    
-
-    
 };
 #endif /* defined(__FmSynth4__FmSynth4Dsp__) */

@@ -62,11 +62,9 @@ float ADSR::process(CADSREnvLState* pS) {
     float result = 0.0;
     switch (pS->mStage) {
         case kIdle:
-            result=0.0;
             break;
         case kStageAttack:
             pS->mEnvValue += attack;
-            attack+=.01;
             if (pS->mEnvValue  >= 1.0) {
                 pS->mEnvValue  =  1.0;
                 pS->mStage = kStageDecay;
@@ -86,7 +84,7 @@ float ADSR::process(CADSREnvLState* pS) {
             break;
         case kStageRelease:
             pS->mEnvValue  -=release;
-            if (pS->mEnvValue  < 0.00003f) {
+            if (pS->mEnvValue  < 0.00001f) {
                 pS->mEnvValue  = 0.0;
                 pS->mStage = kIdle;
             }
@@ -107,25 +105,23 @@ ADSR::ADSR(void) {
     setReleaseRate(0.);
     setSustainLevel(0.);
     setSampleRate(44100.0);
-    iSR=-(1.0f/sampleRate);
-    
 }
-
 ADSR::~ADSR(void) {
 }
 void ADSR::setSampleRate(float sr){
     sampleRate=sr;
+    iSR = -(1./sr);
 }
 void ADSR::setAttackRate(float rate) {
-    attack = 1.0f - (float)(exp(iSR * exp(5.0 - 8.0 * rate)));
+    attack = 1.0f - (float)(exp(iSR * exp(5.0 - 8.0*rate)));
 }
 
 void ADSR::setDecayRate(float rate) {
-    decay =  1.0f - (float)(exp(iSR * exp(5.0 - 8.0 * rate)));
+    decay =  1.0f - (float)(exp(iSR * exp(5.0 - 8.0*rate)));
 }
 
 void ADSR::setReleaseRate(float rate) {
-    release = 1.0f - (float)(exp(iSR * exp(5.0 - 8.0 * rate)));
+    release = 1.0f - (float)(exp(iSR * exp(5.0 - 8.0*rate)));
 }
 
 void ADSR::setSustainLevel(float level) {

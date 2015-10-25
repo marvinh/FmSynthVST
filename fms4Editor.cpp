@@ -54,26 +54,57 @@ fms4Editor::fms4Editor (void* ptr)
 bool fms4Editor::open (void* ptr)
 {
   
-    CRect frameSize (0, 0, 700,500);
+    CRect frameSize(0, 0, 700,500);
     CRect knobFrame(0,0,30,30);
-    CRect knobFrame2(0,0,15,60);
+    CRect knobFrame2(0,0,30,100);
     CRect polyFrame(0,0,100,40);
-    CRect textFrame(0,0,60,20);
+    CRect operatorsLabelFrame(0,0,60,20);
+    CRect matrixLabelFrame(0,0,60,20);
+    CRect tabFrame(0,0,300,230);
+    CRect tabSize(0,0,40,40);
     
-    envW=30;//Knobframe2 offsets
-    envH=70;
-    
+    envW=45;//Knobframe2 offsets
+    envH=110;
     matW=31;//Knobframe offsets
     matH=31;
     
-    CFrame* newFrame = new CFrame (frameSize,this);
+    CFrame* newFrame = new CFrame (frameSize,this);//"mainframe"
     
-    textFrame.offset(60,40);
-    CTextLabel* envlabel = new CTextLabel(textFrame,"Envelopes");
+    CTextButton* op1EnvB = new CTextButton(tabSize,this,-1,"OP1");
+    op1EnvB->setRoundRadius(0);
+    op1EnvB->setGradient(NULL);
+    CTextButton* op2EnvB = new CTextButton(tabSize,this,-1,"OP2");
+    op2EnvB->setRoundRadius(0);
+    op2EnvB->setGradient(NULL);
+    CTextButton* op3EnvB = new CTextButton(tabSize,this,-1,"OP3");
+    op3EnvB->setRoundRadius(0);
+    op3EnvB->setGradient(NULL);
+    CTextButton* op4EnvB = new CTextButton(tabSize,this,-1,"OP4");
+    op4EnvB->setRoundRadius(0);
+    op4EnvB->setGradient(NULL);
+
+    tabFrame.offset(40,40);
+    CTabView* tabView = new CTabView(tabFrame, tabSize);
+    CTabView* op1EnvTab = new CTabView(tabFrame, tabSize);
+    CTabView* op2EnvTab = new CTabView(tabFrame, tabSize);
+    CTabView* op3EnvTab = new CTabView(tabFrame, tabSize);
+    CTabView* op4EnvTab = new CTabView(tabFrame, tabSize);
+    
+    tabView->setBackgroundColor(CColor(0,26,53,100));
+    tabView->addTab(op1EnvTab,op1EnvB);
+    tabView->addTab(op2EnvTab,op2EnvB);
+    tabView->addTab(op3EnvTab,op3EnvB);
+    tabView->addTab(op4EnvTab,op4EnvB);
+    
+    operatorsLabelFrame.offset(200,40);
+    CTextLabel* envlabel = new CTextLabel(operatorsLabelFrame,"Operators");
     envlabel->setFontColor(kWhiteCColor);
+    envlabel->setFrameColor(kWhiteCColor);
     
-    textFrame.offset(380,0);
-    CTextLabel* matlabel = new CTextLabel(textFrame,"Matrix");
+    matrixLabelFrame.offset(440,40);
+    CTextLabel* matlabel = new CTextLabel(matrixLabelFrame,"FM Matrix");
+    matlabel->setFontColor(kWhiteCColor);
+    matlabel->setFrameColor(kWhiteCColor);
 
     CBitmap* animatedKnob = new CBitmap("matkb.png");
     CBitmap* animatedKnob2 = new CBitmap("envkb.png");
@@ -83,65 +114,64 @@ bool fms4Editor::open (void* ptr)
     newFrame->setBackgroundColor (CColor(0,26,53,200));
     newFrame->addView(envlabel);
     newFrame->addView(matlabel);
+    newFrame->addView(tabView);
     
-    knobFrame2.offset(60,60);
-    
+    knobFrame2.offset(20,20);
     CKnob* a1 = new CAnimKnob(knobFrame2,this,kAttack1,animatedKnob2,CPoint(0,0));
-    newFrame->addView (a1);
+    op1EnvTab->addView (a1);
     knobFrame2.offset(envW,0);
     CKnob* d1 = new CAnimKnob(knobFrame2,this,kDecay1,animatedKnob2,CPoint(0,0));
-    newFrame->addView (d1);
+    op1EnvTab->addView (d1);
     knobFrame2.offset(envW,0);
     CKnob* s1 = new CAnimKnob(knobFrame2,this,kSustain1,animatedKnob2,CPoint(0,0));
-    newFrame->addView (s1);
+    op1EnvTab->addView (s1);
     knobFrame2.offset(envW,0);
     CKnob* r1 = new CAnimKnob(knobFrame2,this,kRelease1,animatedKnob2,CPoint(0,0));
-    newFrame->addView (r1);
+    op1EnvTab->addView (r1);
     
-    knobFrame2.offset(-3*envW,envH);
+    knobFrame2.offset(-3*envW,0);
     CKnob* a2 = new CAnimKnob(knobFrame2,this,kAttack2,animatedKnob2,CPoint(0,0));
-    newFrame->addView (a2);
+    op2EnvTab->addView (a2);
     knobFrame2.offset(envW,0);
     CKnob* d2 = new CAnimKnob(knobFrame2,this,kDecay2,animatedKnob2,CPoint(0,0));
-    newFrame->addView (d2);
+    op2EnvTab->addView (d2);
     knobFrame2.offset(envW,0);
     CKnob* s2 = new CAnimKnob(knobFrame2,this,kSustain2,animatedKnob2,CPoint(0,0));
-    newFrame->addView (s2);
+    op2EnvTab->addView (s2);
     knobFrame2.offset(envW,0);
     CKnob* r2 = new CAnimKnob(knobFrame2,this,kRelease2,animatedKnob2,CPoint(0,0));
-    newFrame->addView (r2);
+    op2EnvTab->addView (r2);
 
-    knobFrame2.offset(-3*envW,envH);
+    
+    knobFrame2.offset(-3*envW,0);
     CKnob* a3 = new CAnimKnob(knobFrame2,this,kAttack3,animatedKnob2,CPoint(0,0));
-    newFrame->addView (a3);
+    op3EnvTab->addView (a3);
     knobFrame2.offset(envW,0);
     CKnob* d3 = new CAnimKnob(knobFrame2,this,kDecay3,animatedKnob2,CPoint(0,0));
-    newFrame->addView (d3);
+    op3EnvTab->addView (d3);
     knobFrame2.offset(envW,0);
     CKnob* s3 = new CAnimKnob(knobFrame2,this,kSustain3,animatedKnob2,CPoint(0,0));
-    newFrame->addView (s3);
+    op3EnvTab->addView (s3);
     knobFrame2.offset(envW,0);
     CKnob* r3 = new CAnimKnob(knobFrame2,this,kRelease3,animatedKnob2,CPoint(0,0));
-    newFrame->addView (r3);
+    op3EnvTab->addView (r3);
     
-    
-    knobFrame2.offset(-3*envW,envH);
+    knobFrame2.offset(-3*envW,0);
     CKnob* a4 = new CAnimKnob(knobFrame2,this,kAttack4,animatedKnob2,CPoint(0,0));
-    newFrame->addView (a4);
+    op4EnvTab->addView (a4);
     knobFrame2.offset(envW,0);
     CKnob* d4 = new CAnimKnob(knobFrame2,this,kDecay4,animatedKnob2,CPoint(0,0));
-    newFrame->addView (d4);
+    op4EnvTab->addView (d4);
     knobFrame2.offset(envW,0);
     CKnob* s4 = new CAnimKnob(knobFrame2,this,kSustain4,animatedKnob2,CPoint(0,0));
-    newFrame->addView (s4);
+    op4EnvTab->addView (s4);
     knobFrame2.offset(envW,0);
     CKnob* r4 = new CAnimKnob(knobFrame2,this,kRelease4,animatedKnob2,CPoint(0,0));
-    newFrame->addView (r4);
+    op4EnvTab->addView (r4);
     
-    
-    polyFrame.offset(0,460);
-    CKnob* knob1 = new CAnimKnob(polyFrame,this,kVoices,animatedKnobPoly,CPoint(0,0));
-    newFrame->addView (knob1);
+    polyFrame.offset(40,460);
+    CKnob* poly = new CAnimKnob(polyFrame,this,kVoices,animatedKnobPoly,CPoint(0,0));
+    newFrame->addView (poly);
 
     knobFrame.offset(440,60);
     CKnob* km121 = new CAnimKnob(knobFrame,this,kMod1to1,animatedKnob,CPoint(0,0));
@@ -162,8 +192,6 @@ bool fms4Editor::open (void* ptr)
     CKnob* op1 = new CAnimKnob(knobFrame,this,kOutPut1,animatedKnob,CPoint(0,0));
     newFrame->addView (op1);
 
-    
-    
     knobFrame.offset(matW,-20-matH*5);
     CKnob* km122 = new CAnimKnob(knobFrame,this,kMod1to2,animatedKnob,CPoint(0,0));
     newFrame->addView (km122);
@@ -202,7 +230,6 @@ bool fms4Editor::open (void* ptr)
     CKnob* op3 = new CAnimKnob(knobFrame,this,kOutPut3,animatedKnob,CPoint(0,0));
     newFrame->addView (op3);
 
-    
     knobFrame.offset(matW,-20-matH*5);
     CKnob* km124 = new CAnimKnob(knobFrame,this,kMod1to4,animatedKnob,CPoint(0,0));
     newFrame->addView (km124);
@@ -226,8 +253,9 @@ bool fms4Editor::open (void* ptr)
     animatedKnobPoly->forget();
     animatedKnob2->forget();
     
+    
     //-- remember our controls so that we can sync them with the state of the effect
-    controls[kVoices] = knob1;
+    controls[kVoices] = poly;
     controls[kMod1to1] = km121;
     controls[kMod2to1] = km221;
     controls[kMod3to1] = km321;
@@ -267,7 +295,7 @@ bool fms4Editor::open (void* ptr)
     controls[kDecay2] = d2;
     controls[kSustain2] = s2;
     controls[kRelease2] = r2;
-    
+ 
     controls[kAttack3] = a3;
     controls[kDecay3] = d3;
     controls[kSustain3] = s3;
@@ -286,7 +314,6 @@ bool fms4Editor::open (void* ptr)
     //-- sync parameters
     for (int i = 0; i < kNumParams; i++)
         setParameter (i, effect->getParameter (i));
-    
     return true;
 }
 
@@ -300,8 +327,6 @@ void fms4Editor::close ()
     CFrame* oldframe = frame;
     frame=0;
     oldframe->forget();
-    
-    
 }
 
 //------------------------------------------------------------------------------------

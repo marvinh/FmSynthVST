@@ -30,19 +30,17 @@ fms4::fms4(audioMasterCallback audioMaster) : AudioEffectX(audioMaster, NPROGS, 
             mVS[v].mEnv_ctx[i].mLevel=0.0f;
             mVS[v].mEnv_ctx[i].mEnvValue=0.0f;
             mVS[v].mEnv_ctx[i].mPrev=0.0f;
-            
-            
+            mVS[v].mOsc_ctx[0].mod[i]=0.0f;
             mVS[v].mOsc_ctx[1].mod[i]=0.0f;
             mVS[v].mOsc_ctx[2].mod[i]=0.0f;
             mVS[v].mOsc_ctx[3].mod[i]=0.0f;
-            mVS[v].mOsc_ctx[4].mod[i]=0.0f;
             mVS[v].mOsc_ctx[i].mPhase=0.0f;
             mVS[v].mOsc_ctx[i].mPhaseIncr=0.0f;
             OutPut[i]= 0.0f;
         }
         mVS[v].age=0;
     }
-
+    
     
     for(int i = 0; i < 4 ; i++){
         mOsc[i] = new CWTOsc(mTable, TABLE_SIZE);
@@ -97,7 +95,6 @@ void fms4::update()  //parameter change //if multitimbral would have to move all
 {
     float * param = programs[curProgram].param;
     
-    
     mEnv[0]->setStageTime(kStageAttack,param[kAttack1]);
     mEnv[0]->setStageTime(kStageDecay,param[kDecay1]);
     mEnv[0]->setSustainLevel(mPS[kSustain1].Process(param[kSustain1]));
@@ -125,7 +122,7 @@ void fms4::update()  //parameter change //if multitimbral would have to move all
     mOsc[0]->modAmp[2]= mPS[kMod3to1].Process(param[kMod3to1]);
     mOsc[0]->modAmp[3]= mPS[kMod4to1].Process(param[kMod4to1]);
     
-    mOsc[1]->modAmp[0]=mPS[kMod1to2].Process(param[kMod1to2]);
+    mOsc[1]->modAmp[0]= mPS[kMod1to2].Process(param[kMod1to2]);
     mOsc[1]->modAmp[1]= mPS[kMod2to2].Process(param[kMod2to2]);
     mOsc[1]->modAmp[2]= mPS[kMod3to2].Process(param[kMod3to2]);
     mOsc[1]->modAmp[3]= mPS[kMod4to2].Process(param[kMod4to2]);
@@ -157,15 +154,12 @@ void fms4::voiceUpdate(){
             mVS[v].mEnv_ctx[i].mStage=kIdle;
             mVS[v].mEnv_ctx[i].mLevel=0.0f;
             mVS[v].mEnv_ctx[i].mEnvValue=0.0f;
-            
+            mVS[v].mOsc_ctx[0].mod[i]=0.0f;
             mVS[v].mOsc_ctx[1].mod[i]=0.0f;
             mVS[v].mOsc_ctx[2].mod[i]=0.0f;
             mVS[v].mOsc_ctx[3].mod[i]=0.0f;
-            mVS[v].mOsc_ctx[4].mod[i]=0.0f;
-            
             mVS[v].mOsc_ctx[i].mPhase=0.0f;
             mVS[v].mOsc_ctx[i].mPhaseIncr=0.0f;
-            
         }
         mVS[v].age=0;
     }
@@ -331,6 +325,7 @@ void fms4::processReplacing(float **inputs, float **outputs, VstInt32 sampleFram
     if(activevoices>0||notes[event]<sampleFrames){
         while(frame<sampleFrames)
         {
+            update();
             frames = notes[event++];
             if(frames>sampleFrames) frames = sampleFrames;
             frames -= frame;
@@ -343,16 +338,20 @@ void fms4::processReplacing(float **inputs, float **outputs, VstInt32 sampleFram
                 for(int v=0;v<voices;v++)// for each vs
                 {
                     vs = &mVS[v];
-                    if(vs->GetBusy()){
-                        for(int i=4; i--;)
+                    if(  vs->mEnv_ctx[0].mStage!=kIdle
+                       ||vs->mEnv_ctx[1].mStage!=kIdle
+                       ||vs->mEnv_ctx[2].mStage!=kIdle
+                       ||vs->mEnv_ctx[3].mStage!=kIdle)
+                    {
+                        for(int i=0; i<4;i++)
                         {
-                            vs->mOsc_ctx[0].mod[i] = osc[i]=mEnv[i]->process(&vs->mEnv_ctx[i])*mOsc[i]->process(&vs->mOsc_ctx[i]);
+                            vs->mOsc_ctx[0].mod[i] = osc[i]=
+                            mEnv[i]->process(&vs->mEnv_ctx[i])
+                            *mOsc[i]->process(&vs->mOsc_ctx[i]);
                             vs->mOsc_ctx[1].mod[i] = osc[i];
                             vs->mOsc_ctx[2].mod[i] = osc[i];
                             vs->mOsc_ctx[3].mod[i] = osc[i];
                             
-                        }
-                        for(int i=4; i--;){
                             lo+= sqrt(.5f-Pan[i]) * (osc[i]*OutPut[i]);
                             ro+=  sqrt(.5f+Pan[i]) * (osc[i]*OutPut[i]);
                         }
@@ -375,12 +374,11 @@ void fms4::processReplacing(float **inputs, float **outputs, VstInt32 sampleFram
         activevoices = voices;
         for(int v=0; v<voices; v++)
         {
-            if(!mVS[v].GetBusy())  //choke voices that have finished
+            if(mVS[v].mEnv_ctx[0].mStage==kIdle
+               &&mVS[v].mEnv_ctx[1].mStage==kIdle
+               &&mVS[v].mEnv_ctx[2].mStage==kIdle
+               &&mVS[v].mEnv_ctx[3].mStage==kIdle)  //choke voices that have finished
             {
-                mVS[v].mEnv_ctx[0].mEnvValue = 0.0f;
-                mVS[v].mEnv_ctx[1].mEnvValue =0.0f;
-                mVS[v].mEnv_ctx[2].mEnvValue =0.0f;
-                mVS[v].mEnv_ctx[3].mEnvValue =0.0f;
                 activevoices--;
             }
         }
@@ -393,12 +391,17 @@ void fms4::processReplacing(float **inputs, float **outputs, VstInt32 sampleFram
 }
 
 int fms4::FindFreeVoice(){
-    for(int i=0;i<voices;i++){
-        if(!mVS[i].GetBusy()){
-            mVS[i].age=0;
-            return i;
+    for(int v=0;v<voices;v++){
+        if(  mVS[v].mEnv_ctx[0].mStage==kIdle
+           &&mVS[v].mEnv_ctx[1].mStage==kIdle
+           &&mVS[v].mEnv_ctx[2].mStage==kIdle
+           &&mVS[v].mEnv_ctx[3].mStage==kIdle){
+            mVS[v].age=0;
+            for(int i =0;i<4;i++)
+                mVS[v].mOsc_ctx[i].mPhase=0.0f;
+            return v;
         }else{
-            mVS[i].age++;
+            mVS[v].age++;
         }
     }
     int currentIndex=1;
@@ -410,6 +413,8 @@ int fms4::FindFreeVoice(){
         }
         currentIndex++;
     }
+    for(int i =0;i<4;i++)
+        mVS[oldestIndex].mOsc_ctx[i].mPhase=0.0f;
     mVS[oldestIndex].age=0;
     return oldestIndex;
     
@@ -418,47 +423,45 @@ void fms4::noteOn(VstInt32 note, VstInt32 velocity)
 {
     if(velocity>0)
     {
-        int v=0;
-        v=FindFreeVoice();
-        noteIsOn=true;
+        int v=FindFreeVoice();
         mVS[v].mKey=note;
         mVS[v].noteIsOn=true;
         activevoices++;
         for(int i = 0; i<4 ; i++){
-                                            //1.0f/SampleRate
-            mVS[v].mOsc_ctx[i].mPhaseIncr = (0.00002267573696f) * midi2CPS(note);
-                                                        //1./127.
-            mVS[v].mEnv_ctx[i].mLevel = (float)velocity*0.00787401574803f;
-            
+            mVS[v].mOsc_ctx[i].mPhaseIncr = 1.f/Fs * midi2CPS(note);
+            //mVS[v].mOsc_ctx[i].mPhase=0.0f;//retrigger
             mVS[v].mEnv_ctx[i].mStage = kStageAttack;
-            
+            mVS[v].mEnv_ctx[i].mLevel = velocity*(1.f/127.f);
         }
     }
     else //note off
     {
-        for (int i = 0; i < voices; i++)
+        for (int v = 0; v < voices; v++)
         {
-            if(mVS[i].mKey == note)
+            if(mVS[v].mKey == note)
             {
-                
-                mVS[i].mEnv_ctx[0].mStage=kStageRelease;
-                mVS[i].mEnv_ctx[1].mStage=kStageRelease;
-                mVS[i].mEnv_ctx[2].mStage=kStageRelease;
-                mVS[i].mEnv_ctx[3].mStage=kStageRelease;
-                mVS[i].mKey=-1;
-                mVS[i].noteIsOn=false;
-                return;
+                if(mVS[v].mEnv_ctx[0].mStage!=kIdle
+                   ||mVS[v].mEnv_ctx[1].mStage!=kIdle
+                   ||mVS[v].mEnv_ctx[2].mStage!=kIdle
+                   ||mVS[v].mEnv_ctx[3].mStage!=kIdle){
+                        for(int i =0;i<4;i++){
+                            mVS[v].mEnv_ctx[i].mStage=kStageRelease;
+                        }
+                        mVS[v].mKey=-1;
+                        mVS[v].noteIsOn=false;
+                    return;
+                }
             }
-            
         }
         
     }
+    
 }
 
 VstInt32 fms4::processEvents(VstEvents* ev)
 {
     VstInt32 npos=0;
-   
+    
     for (VstInt32 i=0; i<ev->numEvents; i++)
     {
         if((ev->events[i])->type != kVstMidiType) continue;

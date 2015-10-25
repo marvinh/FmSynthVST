@@ -71,22 +71,16 @@ private:
     void update();  //my parameter update
     void noteOn(VstInt32 note, VstInt32 velocity);
     void fillpatch(VstInt32 p, char *name,int v,float patch[]);
-    
     fms4Program* programs;
     float Fs;
-    
     void voiceUpdate();
-    
-#define EVENTBUFFER 120
-#define EVENTS_DONE 99999999
+    #define EVENTBUFFER 120
+    #define EVENTS_DONE 99999999
     VstInt32 notes[EVENTBUFFER + 8];  //list of delta|note|velocity for current block
-    
     ///global internal variables
     CVoiceState mVS[NVOICES];
-    
     CWTOsc* mOsc[4];
     ADSR* mEnv[4];
-    
     float Pan[4];
     float OutPut[4];
     float *mTable;
@@ -94,11 +88,8 @@ private:
     int FindFreeVoice();
     int voices;
     int voiceMaintain;
-    bool noteIsOn=true;
     float pPatch[NPARAMS];
-    
     int parameterIndex;
-
 #define SUSTAIN 128
     VstInt32 sustain, activevoices, K;
 };

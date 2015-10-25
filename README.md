@@ -9,3 +9,5 @@ Sytrus or Native Instruments fm8.This project uses the vst 2.x sdk,
 and VSTGUI4 both found here http://www.steinberg.net/en/company/developers.html
 
 If you have any questions please email me: MarvinHarootoonyan@gmail.com
+
+![Alt text](https://github.com/marvinh/FmSynthVST/blob/master/fms4_Screen_Shot.png "fms4 screen shot")
